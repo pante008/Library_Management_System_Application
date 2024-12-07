@@ -1,0 +1,106 @@
+Use LIMS_DB;
+
+
+
+CREATE TABLE users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) NOT NULL,
+    password VARCHAR(50) NOT NULL,
+    role ENUM('librarian', 'borrower') NOT NULL
+);
+
+
+-- Inserting a librarian
+INSERT INTO users (username, password, role) VALUES (‘admin', ‘admin123', 'librarian');
+
+-- Inserting a borrower
+INSERT INTO users (username, password, role) VALUES (‘user1', ‘user123', 'borrower');
+
+
+
+
+CREATE TABLE books (
+    book_id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    author VARCHAR(255),
+    isbn VARCHAR(17) NOT NULL UNIQUE,
+    total_copies INT NOT NULL,
+    available_copies INT NOT NULL
+);
+
+
+INSERT INTO books (title, author, isbn, total_copies, available_copies)
+VALUES ('The Lord of the Rings: The Fellowship of the Ring', 'J.R.R. Tolkien', '978-0-261-10280-0', 10, 10);
+
+INSERT INTO books (title, author, isbn, total_copies, available_copies)
+VALUES ('Pride and Prejudice', 'Jane Austen', '978-0-140-43951-6', 5, 5);
+
+INSERT INTO books (title, author, isbn, total_copies, available_copies)
+VALUES ('To Kill a Mockingbird', 'Harper Lee', '978-0-446-31072-7', 7, 7);
+
+INSERT INTO books (title, author, isbn, total_copies, available_copies)
+VALUES ('The Hitchhiker\'s Guide to the Galaxy', 'Douglas Adams', '978-0-345-39180-3', 3, 3);
+
+INSERT INTO books (title, author, isbn, total_copies, available_copies)
+VALUES ('One Hundred Years of Solitude', 'Gabriel García Márquez', '978-0-307-47204-0', 8, 8);
+
+CREATE TABLE borrowers (
+    borrower_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    membership_date DATE NOT NULL
+);
+
+
+
+INSERT INTO borrowers (name, email, membership_date)
+VALUES ('John Doe', 'john.doe@example.com', '2024-04-06');
+
+INSERT INTO borrowers (name, email, membership_date)
+VALUES ('Jane Smith', 'jane.smith@example.com', '2023-12-25');
+
+INSERT INTO borrowers (name, email, membership_date)
+VALUES ('Alice Brown', 'alice.brown@example.com', '2024-02-14');
+
+INSERT INTO borrowers (name, email, membership_date)
+VALUES ('Michael Chen', 'michael.chen@example.com', '2024-03-10');
+
+INSERT INTO borrowers (name, email, membership_date)
+VALUES ('Olivia Garcia', 'olivia.garcia@example.com', '2024-01-01');
+
+CREATE TABLE transactions (
+    transaction_id INT AUTO_INCREMENT PRIMARY KEY,
+    book_id INT NOT NULL,
+    borrower_id INT NOT NULL,
+    issue_date DATE NOT NULL,
+    due_date DATE NOT NULL,
+    return_date DATE,
+    FOREIGN KEY (book_id) REFERENCES books(book_id),
+    FOREIGN KEY (borrower_id) REFERENCES borrowers(borrower_id)
+);
+
+-- Assuming you have books and borrowers already inserted 
+
+INSERT INTO transactions (book_id, borrower_id, issue_date, due_date)
+VALUES (1, 2, '2024-04-08', '2024-04-22');  -- John Doe borrows book with ID 1
+
+INSERT INTO transactions (book_id, borrower_id, issue_date, due_date)
+VALUES (3, 1, '2024-04-07', '2024-04-21');  -- Jane Smith borrows book with ID 3
+
+INSERT INTO transactions (book_id, borrower_id, issue_date, due_date)
+VALUES (2, 4, '2024-04-06', '2024-04-20');  -- Michael Chen borrows book with ID 2
+
+INSERT INTO transactions (book_id, borrower_id, issue_date, due_date)
+VALUES (2, 5, '2024-04-06', '2024-04-09');  -- Yu Chen borrows book with ID 2
+
+
+
+ALTER TABLE transactions ADD CONSTRAINT borrower_id_foreign FOREIGN KEY (borrower_id) REFERENCES borrowers(borrower_id) ON DELETE CASCADE;
+
+ALTER TABLE transactions ADD CONSTRAINT book_id_foreign FOREIGN KEY (book_id) REFERENCES books(book_id) ON DELETE CASCADE;
+
+
+
+select * from books;
+select * from borrowers;
+Select * from transactions;
